@@ -13,9 +13,13 @@ export default function App() {
   const [error, setError] = useState('');
   const [results, setResults] = useState(20);
 
-  const postPlaylist = async (playlist: Playlist) => {
+  const postPlaylist = async (playlist: Playlist, method: string) => {
     try {
-      await axios.post(url('playlists'), playlist);
+      if (method === 'POST')
+        await axios.post(url('playlists'), playlist);
+      else if (method === 'PUT') {
+        await axios.put(url('playlists', playlist.id), playlist);
+      }
     } catch (error) {
       setError(error);
     }
@@ -75,7 +79,7 @@ export default function App() {
     ];
     
     setPlaylists(newPlaylists);
-    postPlaylist(playlist);
+    postPlaylist(playlist, 'POST');
   };
 
   const destroyPlaylist = (id: number): void => {
@@ -91,8 +95,21 @@ export default function App() {
     setResults(results + 20);
   }
 
+  // Couldn't finish this in time unfortunately.
+  const addSongToPlaylist = (song: number, playlist: Playlist) => {
+    const newPlaylist = {
+      ...playlist,
+      songs: [
+        ...playlist.songs,
+        song
+      ]
+    }
+    postPlaylist(newPlaylist, 'PUT');
+  }
+
   return (
     <main className="App">
+      {/* <button onClick={() => addSongToPlaylist(190, playlists[0])}>CLICK ME</button> */}
       {error && <div data-testid="error">Failed to load data</div>}
       {
         (artists.length > 0) && (

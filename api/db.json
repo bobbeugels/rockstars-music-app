@@ -33763,6 +33763,13 @@
     {
       "id": 0,
       "name": "Playlist example",
+      "songs": [
+        190
+      ]
+    },
+    {
+      "name": "Another playlist",
+      "id": 404,
       "songs": []
     }
   ]

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Switch, Route } from 'react-router-dom';
-import { Artist, ArtistDetail } from '../Artist';
+import { Artist, Artists, ArtistDetail } from '../Artist';
 import { Playlists, Playlist } from '../Playlist';
 import { randomInt, url } from '../../utilities';
 import './App.scss';
@@ -12,6 +12,7 @@ export default function App() {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState('');
+  const [results, setResults] = useState(20);
 
   const postPlaylist = async (playlist: Playlist) => {
     try {
@@ -83,23 +84,32 @@ export default function App() {
 
   const destroyPlaylist = (id: number): void => {
     if (playlists) {
-      const newPlaylists = playlists.filter(playlist => playlist.id !== id);
+      const newPlaylists = playlists
+        .filter(playlist => playlist.id !== id);
       setPlaylists(newPlaylists);
     }
     deletePlaylist(id);
   };
 
+  const loadMoreResults = () => {
+    setResults(results + 20);
+  }
+
   return (
     <main className="App">
       {error && <div data-testid="error">Failed to load data</div>}
       {
-        songs.length && artists.length && (
+        (songs.length > 0  && artists.length > 0) && (
           <React.Fragment>
-            {songs.length > 0 && <div data-testid="songs-resolved">songs</div>}
+            {songs.length > 0 && <div style={{display: 'none'}} data-testid="songs-resolved">songs</div>}
             <Playlists createPlaylist={createPlaylist}>
               {
                 playlists.map(playlist => (
-                  <Playlist destroyPlaylist={destroyPlaylist} playlist={playlist} />
+                  <Playlist
+                    key={playlist.id}
+                    destroyPlaylist={destroyPlaylist}
+                    playlist={playlist}
+                  />
                 ))
               }
             </Playlists>
@@ -108,33 +118,31 @@ export default function App() {
                 <Route exact path="/">
                   {
                     artists.length > 0 && (
-                      <div data-testid="artists-resolved">
-                        <input
-                          data-testid="artist-search"
-                          placeholder="Search in Artists"
-                          value={searchQuery}
-                          onChange={handleSearchInput}
-                        />
-                        <h2>
-                          Artists:
-                        </h2>
+                      <Artists searchQuery={searchQuery} handleSearchInput={handleSearchInput}>
                         {
                           artists
                             .filter((artist: Artist) => {
                               const regex = new RegExp(searchQuery, 'i');
                               return artist.name.match(regex);
                             })
+                            .slice(0, results)
                             .map((artist: Artist) => (
                               <Artist key={artist.id} {...artist} />
                             ))
                         }
-                      </div>
+                        <button
+                          className='Artists__LoadMore' 
+                          onClick={loadMoreResults}
+                        >
+                          Load more
+                        </button>
+                      </Artists>
                     )
                   }
                 </Route>
                 <Route path="/artists/:id">
                   {
-                    artists.length && (
+                    artists.length > 0 && (
                       <ArtistDetail
                         findArtistById={findArtistById}
                         findSongsByArtist={findSongsByArtist}

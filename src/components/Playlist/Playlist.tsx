@@ -1,4 +1,5 @@
 import React from 'react';
+import './Playlist.scss';
 
   export default function Playlist(props: {
   playlist: Playlist,
@@ -11,8 +12,8 @@ import React from 'react';
   return (
     <div className="Playlist">
       {props.playlist.name}
-      <span className="Playlist__delete" onClick={remove}>
-        x
+      <span className="Playlist__Delete" onClick={remove}>
+        &times;
       </span>
     </div>
   );

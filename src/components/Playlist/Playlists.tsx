@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Playlists.scss';
 
 export default function Playlists(props: {
   children: React.ReactNode,
@@ -23,16 +24,14 @@ export default function Playlists(props: {
 
   return (
     <section className="Playlists">
-      <h2>Playlists</h2>
+      <h2 className="Playlists__Heading">Playlists</h2>
       <form onSubmit={handleSubmit}>
-        <label>
-          Playlist name:
-          <input
-            value={playlistName}
-            onChange={handleChange}
-          />
-        </label>
-        <input type="submit" value="Submit" />
+        <input
+          className="Playlists__Input"
+          placeholder='Add playlist'
+          value={playlistName}
+          onChange={handleChange}
+        />
       </form>
       {props.children}
     </section>

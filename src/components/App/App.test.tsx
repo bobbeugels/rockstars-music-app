@@ -20,7 +20,7 @@ test('App fetches data', async () => {
   mock.onGet(url('artists')).reply(200, db.artists);
   mock.onGet(url('playlists')).reply(200, db.playlists);
 
-  const { getByTestId } = render(
+  const { getByTestId, getByRole } = render(
     <Router history={history}>
       <App />
     </Router>
@@ -29,7 +29,7 @@ test('App fetches data', async () => {
   const resolvedSongs = await waitForElement(() => getByTestId('songs-resolved'));
   expect(resolvedSongs).toHaveTextContent('songs');
   const resolvedArtists = await waitForElement(() => getByTestId('artists-resolved'));
-  expect(resolvedArtists).toHaveTextContent('Artists:');
+  expect(resolvedArtists).toHaveTextContent('Artists');
 });
 
 test('App throws error when fails to load data', async () => {

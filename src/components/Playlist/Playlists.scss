@@ -1,0 +1,15 @@
+.Playlists {
+  &__Heading {
+    font-size: 3rem;
+    padding: 1rem;
+    background-color: #ffdf00;
+    font-weight: bold;
+  }
+
+  &__Input {
+    font-size: 1.2rem;
+    padding: .5rem 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

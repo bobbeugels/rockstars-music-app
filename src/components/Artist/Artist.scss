@@ -1,0 +1,19 @@
+.Artist {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  padding-left: 1rem;
+  height: 3.5rem;
+  text-decoration: none;
+  color: #000000;
+
+  &:nth-child(odd) {
+    background-color: #f7f7f7;
+  }
+
+  &:hover {
+    background-color: #ffdf00;
+    color: #000000;
+  }
+}

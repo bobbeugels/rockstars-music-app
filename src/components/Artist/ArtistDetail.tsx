@@ -1,5 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import './ArtistDetail.scss';
+import { Song } from '../Song';
 
 export default function ArtistDetail(props: {
   findArtistById: (id: number) => Artist,
@@ -14,12 +16,14 @@ export default function ArtistDetail(props: {
   if (artist) {
     return (
       <div className="ArtistDetail">
-        <h1>{artist.name}</h1>
+        <h1 className="ArtistDetail__Heading">
+          {artist.name}
+        </h1>
         {
           songs.length > 0 ? (
             songs
               .map((song: Song) => (
-                <div key={song.id}>{song.name}</div>
+                <Song key={song.id} song={song} />
               ))
           ) : (
             <div>No songs found</div>
@@ -28,6 +32,7 @@ export default function ArtistDetail(props: {
       </div>
     );
   }
+
   return (
     <div className="ArtistDetail">
       Artist not found

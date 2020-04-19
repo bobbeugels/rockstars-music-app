@@ -1,3 +1,5 @@
-export default function url(endpoint: string) {
-  return `http://localhost:3001/${endpoint}`
+const addId = (id?: number) => id ? `/${id}` : '';
+
+export default function url(endpoint: string, id?: number) {
+  return `http://localhost:3001/${endpoint}${addId(id)}`
 }

@@ -13,7 +13,7 @@ export default function ArtistDetail(props: {
 
   if (artist) {
     return (
-      <div>
+      <div className="ArtistDetail">
         <h1>{artist.name}</h1>
         {
           songs.length > 0 ? (
@@ -28,7 +28,9 @@ export default function ArtistDetail(props: {
       </div>
     );
   }
-  return <div>
-    Artist not found
-  </div>;
+  return (
+    <div className="ArtistDetail">
+      Artist not found
+    </div>
+  )
 }

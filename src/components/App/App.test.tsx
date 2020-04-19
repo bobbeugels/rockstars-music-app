@@ -30,8 +30,6 @@ test('App fetches data', async () => {
   expect(resolvedSongs).toHaveTextContent('songs');
   const resolvedArtists = await waitForElement(() => getByTestId('artists-resolved'));
   expect(resolvedArtists).toHaveTextContent('Artists:');
-  const resolvedPlaylists = await waitForElement(() => getByTestId('playlists-resolved'));
-  expect(resolvedPlaylists).toHaveTextContent('playlists');
 });
 
 test('App throws error when fails to load data', async () => {

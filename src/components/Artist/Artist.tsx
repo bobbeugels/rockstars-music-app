@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export default function Artist(props: Artist) {
   return (
     <Link to={`/artists/${props.id}`}>
-      <div className='artist'>{props.name}</div>
+      <div className='Artist'>{props.name}</div>
     </Link>
   );
 }

@@ -25,9 +25,6 @@ test('App fetches data', async () => {
       <App />
     </Router>
   );
-
-  const resolvedSongs = await waitForElement(() => getByTestId('songs-resolved'));
-  expect(resolvedSongs).toHaveTextContent('songs');
   const resolvedArtists = await waitForElement(() => getByTestId('artists-resolved'));
   expect(resolvedArtists).toHaveTextContent('Artists');
 });

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Switch, Route } from 'react-router-dom';
-import Artist from '../Artist/Artist';
-import url from '../../utilities/url'
+import { Artist, ArtistDetail } from '../Artist';
+import url from '../../utilities/url';
 import './App.scss';
 
 export default function App() {
@@ -33,6 +33,12 @@ export default function App() {
       })
   }
 
+  const findArtistById = (id: number): Artist =>
+    artists.find(artist => artist.id === id)!;
+
+  const findSongsByArtist = (artist: string): Song[] | [] =>
+    songs.filter(song => song.artist === artist);
+
   useEffect(() => {
     fetchData();
   }, [])
@@ -43,7 +49,7 @@ export default function App() {
       {songs.length > 0 && <div data-testid="songs-resolved">songs</div>}
       {playlists.length > 0 && <div data-testid="playlists-resolved">playlists</div>}
       <Switch>
-          <Route exact path="/">
+        <Route exact path="/">
           {
             artists.length > 0 && (
               <div data-testid="artists-resolved">
@@ -52,21 +58,30 @@ export default function App() {
                 </h2>
                 {
                   artists
-                  .map((artist: Artist) => (
-                    <Artist key={artist.id} {...artist} />
-                  ))
+                    .map((artist: Artist) => (
+                      <Artist key={artist.id} {...artist} />
+                    ))
                 }
               </div>
             )
-            
           }
-          </Route>
-          <Route path="*">
-            <div data-testid="page-not-found">
-              404: Page not found
-            </div>
-          </Route>
-        </Switch>
+        </Route>
+        <Route path="/artists/:id">
+          {
+            artists.length && (
+              <ArtistDetail
+                findArtistById={findArtistById}
+                findSongsByArtist={findSongsByArtist}
+              />
+            )
+          }
+        </Route>
+        <Route path="*">
+          <div data-testid="page-not-found">
+            404: Page not found
+          </div>
+        </Route>
+      </Switch>
     </div>
   );
 }

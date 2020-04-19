@@ -7,7 +7,6 @@ import { randomInt, url } from '../../utilities';
 import './App.scss';
 
 export default function App() {
-  const [songs, setSongs] = useState<Song[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,37 +29,34 @@ export default function App() {
     }
   }
 
-  const fetchData = () => {
-    const request = (endpoint: string) => axios.get(url(endpoint));
-    const requests = ['songs', 'artists', 'playlists']
-      .map((endpoint: string) =>
-        request(endpoint));
-
-    const setStates = [setSongs, setArtists, setPlaylists];
-
-    axios
-      .all(requests)
-      .then(
-        axios
-        .spread((...responses) => {
-          setStates.map((func, i) =>
-            func(responses[i].data));
-        })
-      )
-      .catch(error => {
-        setError(error);
-      })
-  }
-
   useEffect(() => {
+    const fetchData = () => {
+      const request = (endpoint: string) => axios.get(url(endpoint));
+      const requests = ['artists', 'playlists']
+        .map((endpoint: string) =>
+          request(endpoint));
+  
+      const setStates = [setArtists, setPlaylists];
+  
+      axios
+        .all(requests)
+        .then(
+          axios
+          .spread((...responses) => {
+            setStates.map((func, i) =>
+              func(responses[i].data));
+          })
+        )
+        .catch(error => {
+          setError(error);
+        })
+    }
+
     fetchData();
   }, [])
 
   const findArtistById = (id: number): Artist =>
     artists.find(artist => artist.id === id)!;
-
-  const findSongsByArtist = (artist: string): Song[] | [] =>
-    songs.filter(song => song.artist === artist);
 
   const handleSearchInput = (event: React.FormEvent<HTMLInputElement>): void => {
     setSearchQuery(event.currentTarget.value);
@@ -99,9 +95,8 @@ export default function App() {
     <main className="App">
       {error && <div data-testid="error">Failed to load data</div>}
       {
-        (songs.length > 0  && artists.length > 0) && (
+        (artists.length > 0) && (
           <React.Fragment>
-            {songs.length > 0 && <div style={{display: 'none'}} data-testid="songs-resolved">songs</div>}
             <Playlists createPlaylist={createPlaylist}>
               {
                 playlists.map(playlist => (
@@ -145,7 +140,6 @@ export default function App() {
                     artists.length > 0 && (
                       <ArtistDetail
                         findArtistById={findArtistById}
-                        findSongsByArtist={findSongsByArtist}
                       />
                     )
                   }

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Switch, Route } from 'react-router-dom';
+import Artist from '../Artist/Artist';
 import './App.scss';
 
 export default function App() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [error, setError] = useState('');
 
   const fetchData = () => {
     const request = (endpoint: string) => 
@@ -20,11 +23,15 @@ export default function App() {
     axios
       .all(requests)
       .then(
-        axios.spread((...responses) => {
+        axios
+        .spread((...responses) => {
           setStates.map((func, i) =>
             func(responses[i].data));
         })
       )
+      .catch(error => {
+        setError(error);
+      })
   }
 
   useEffect(() => {
@@ -33,9 +40,34 @@ export default function App() {
 
   return (
     <div className="App">
-      {songs && <div data-testid="songs-resolved">songs</div>}
-      {artists && <div data-testid="artists-resolved">artists</div>}
-      {playlists && <div data-testid="playlists-resolved">playlists</div>}
+      {error && <div data-testid="error">Failed to load data</div>}
+      {songs.length > 0 && <div data-testid="songs-resolved">songs</div>}
+      {playlists.length > 0 && <div data-testid="playlists-resolved">playlists</div>}
+      <Switch>
+          <Route exact path="/">
+          {
+            artists.length > 0 && (
+              <div data-testid="artists-resolved">
+                <h2>
+                  Artists:
+                </h2>
+                {
+                  artists
+                  .map((artist: Artist) => (
+                    <Artist key={artist.id} {...artist} />
+                  ))
+                }
+              </div>
+            )
+            
+          }
+          </Route>
+          <Route path="*">
+            <div data-testid="page-not-found">
+              404: Page not found
+            </div>
+          </Route>
+        </Switch>
     </div>
   );
 }

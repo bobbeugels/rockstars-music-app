@@ -1,5 +1,7 @@
 import React from 'react';
-import { render, cleanup, waitForElement, act } from '@testing-library/react';
+import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history'
+import { render, cleanup, waitForElement } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
@@ -9,6 +11,7 @@ import db from '../../../api/db.json';
 afterEach(cleanup);
 
 const url = (endpoint: string) => `http://localhost:3001/${endpoint}`;
+const history = createMemoryHistory();
 
 test('App fetches data', async () => {
   const mock = new MockAdapter(axios);
@@ -18,13 +21,45 @@ test('App fetches data', async () => {
   mock.onGet(url('playlists')).reply(200, db.playlists);
 
   const { getByTestId } = render(
-    <App />
+    <Router history={history}>
+      <App />
+    </Router>
   );
 
   const resolvedSongs = await waitForElement(() => getByTestId('songs-resolved'));
   expect(resolvedSongs).toHaveTextContent('songs');
   const resolvedArtists = await waitForElement(() => getByTestId('artists-resolved'));
-  expect(resolvedArtists).toHaveTextContent('artists');
+  expect(resolvedArtists).toHaveTextContent('Artists:');
   const resolvedPlaylists = await waitForElement(() => getByTestId('playlists-resolved'));
   expect(resolvedPlaylists).toHaveTextContent('playlists');
 });
+
+test('App throws error when fails to load data', async () => {
+  const mock = new MockAdapter(axios);
+
+  mock.onGet(url('songs')).reply(404);
+  mock.onGet(url('artists')).reply(404);
+  mock.onGet(url('playlists')).reply(404);
+
+  const { getByTestId } = render(
+    <Router history={history}>
+      <App />
+    </Router>
+  );
+
+  const resolvedSongs = await waitForElement(() => getByTestId('error'));
+  expect(resolvedSongs).toHaveTextContent('Failed to load data');
+});
+
+test('Landing on a bad page shows 404 page', async () => {
+  history.push('/bad/route')
+
+  const { getByTestId } = render(
+    <Router history={history}>
+      <App />
+    </Router>
+  )
+
+  const resolvedSongs = await waitForElement(() => getByTestId('page-not-found'));
+  expect(resolvedSongs).toHaveTextContent('404: Page not found')
+})

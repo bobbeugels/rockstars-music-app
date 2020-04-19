@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Switch, Route } from 'react-router-dom';
 import Artist from '../Artist/Artist';
+import url from '../../utilities/url'
 import './App.scss';
 
 export default function App() {
@@ -11,9 +12,7 @@ export default function App() {
   const [error, setError] = useState('');
 
   const fetchData = () => {
-    const request = (endpoint: string) => 
-      axios.get(`http://localhost:3001/${endpoint}`);
-
+    const request = (endpoint: string) => axios.get(url(endpoint));
     const requests = ['songs', 'artists', 'playlists']
       .map((endpoint: string) =>
         request(endpoint));

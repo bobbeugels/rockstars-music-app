@@ -9,6 +9,7 @@ export default function App() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState('');
 
   const fetchData = () => {
@@ -33,15 +34,19 @@ export default function App() {
       })
   }
 
+  useEffect(() => {
+    fetchData();
+  }, [])
+
   const findArtistById = (id: number): Artist =>
     artists.find(artist => artist.id === id)!;
 
   const findSongsByArtist = (artist: string): Song[] | [] =>
     songs.filter(song => song.artist === artist);
 
-  useEffect(() => {
-    fetchData();
-  }, [])
+  const handleSearchInput = (event: React.FormEvent<HTMLInputElement>): void => {
+    setSearchQuery(event.currentTarget.value);
+  };
 
   return (
     <div className="App">
@@ -53,11 +58,21 @@ export default function App() {
           {
             artists.length > 0 && (
               <div data-testid="artists-resolved">
+                <input
+                  data-testid="artist-search"
+                  placeholder="Search in Artists"
+                  value={searchQuery}
+                  onChange={handleSearchInput}
+                />
                 <h2>
                   Artists:
                 </h2>
                 {
                   artists
+                    .filter((artist: Artist) => {
+                      const regex = new RegExp(searchQuery, 'i');
+                      return artist.name.match(regex);
+                    })
                     .map((artist: Artist) => (
                       <Artist key={artist.id} {...artist} />
                     ))
